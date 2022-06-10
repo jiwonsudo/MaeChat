@@ -7,6 +7,11 @@ import random
 import json
 import pickle
 import os
+
+import datetime as datetime
+
+import requests as requests
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from keras.models import load_model
 from util import *
@@ -22,8 +27,11 @@ import speech_recognition as sr
 from gtts import gTTS
 from IPython.display import Audio, display
 
-# import for keyboard PTT (Push-To-Talk)
-import keyboard
+# import for APIs
+import json
+import requests
+import datetime
+
 
 
 def speechToText():
@@ -45,11 +53,45 @@ def speechToText():
     return inputText
 
 
-def textToSpeech(outputText: str):
+def textToSpeech(outputText : str):
     audioData = gTTS(text=outputText, lang='ko')  # 한국어 입력
     audioData.save('output.mp3')  # audioData를 output.wav로 저장
     playsound.playsound('output.mp3')
 
+def getLunchMenu(dateToday : str):
+    lunchMenuURL = "https://open.neis.go.kr/hub/mealServiceDietInfo"
+    lunchParams = dict(
+        Type='json',
+        ATPT_OFCDC_SC_CODE='D10',
+        SD_SCHUL_CODE='7240272',
+        MMEAL_SC_CODE='2',
+        MLSV_YMD=dateToday
+    )
+    try:
+        res = requests.get(url=lunchMenuURL, params=lunchParams)
+        resJSON = res.json()
+        lunchMenu: str = resJSON['mealServiceDietInfo'][1]['row'][0]['DDISH_NM']
+    except KeyError: # if dateToday is not the day with lunch:
+        return 'noLunch'
+    transTable = lunchMenu.maketrans({
+        '(': ' ', # 왼쪽은 치환하고 싶은 문자, 오른쪽은 새로운 문자
+        ')': ' ',
+        '1': ' ',
+        '2': ' ',
+        '3': ' ',
+        '4': ' ',
+        '5': ' ',
+        '6': ' ',
+        '7': ' ',
+        '8': ' ',
+        '9': ' ',
+        '0': ' ',
+        '.': ' ',
+    })
+    lunchMenu = lunchMenu.replace('<br/>', '')
+    lunchMenu = lunchMenu.translate(transTable)
+
+    return lunchMenu
 
 def cleanUpSentence(sentence):
     sentence = re.sub(r'[^\w\s]', '', sentence)  # 모든 구두점 제거
@@ -111,45 +153,47 @@ with open('classes.pkl', 'rb') as f:
 model = load_model('chatbot_model.h5')
 
 bot_name = "MaeChat"
-start_message = '''
-안녕하세요, 저는 매천고등학교의 AI 음성 로봇, 매챗이예요.
-'''
 listen_error_message = '죄송해요, 잘 알아듣지 못했어요.'
+textToSpeech('대화를 시작하려면, "t"키를 입력하세요.')
 
-print(start_message)
-textToSpeech(start_message)
-textToSpeech('대화를 시작하려면, "t"키를 누르세요.')
+# start_message = '안녕하세요, 저는 매천고등학교의 AI 음성 로봇, 매챗이예요.'
+# print(start_message)
+# textToSpeech(start_message)
 
 textLog = open('./log.txt', 'w') # make new file 'log.txt' to save dialogs
 logLineCounter : int = 1 # set line counter for log.txt
 
 while True:
-    keypress = input(str('대화를 시작하려면, "t"키를 누르세요: '))
+    keypress = input(str('대화를 시작하려면, "t"키를 입력하세요: '))
+
     if keypress == 't':
-        sentence : str = speechToText()
-        if sentence == '그만할래' or sentence == '잘가' or sentence == '끝':
-            textToSpeech('안녕히 가세요, 다음에 또 봬요.')
+        inputText : str = speechToText()
+
+        pred_list = predictClass(inputText)
+        outputText = getResponse(pred_list, intents)  # intents: json contents
+
+        if inputText == '장비를 정지합니다':
+            textToSpeech('프로그램을 종료합니다.')
             break
-        if sentence.strip() == "":
+
+        if inputText == '점심' or inputText == '급식':
+            lunchData = getLunchMenu(datetime.datetime.today().strftime('%Y%m%d'))
+            if lunchData == 'noLunch':
+                lunchData = '아쉽지만 오늘은 점심이 없는 날이예요.'
+            else:
+                lunchData: str = '오늘 점심 메뉴는 {} 이예요.'.format(lunchData)
+            outputText = lunchData
+
+        if inputText.strip() == "":
             print(listen_error_message)
             textToSpeech(listen_error_message)
             continue
-        pred_list = predictClass(sentence)
-        res = getResponse(pred_list, intents)  # intents: json contents
-        print(bot_name, ": ", res)
-        textToSpeech(res)
+
+        print(bot_name, ": ", outputText)
+        textToSpeech(outputText)
 
         with open('./log.txt', 'a') as textLog: # save log in every chat
-            textLog.write('{0} input: {1}, output: {2}\n'.format(logLineCounter, sentence, res))
+            textLog.write('{0} input: {1}, output: {2}\n'.format(logLineCounter, inputText, outputText))
         logLineCounter += 1
 
 textLog.close()
-
-'''
-pred_list
-{'age': 0.674383, 'greetings': 0.32546297}
-
-predict_class(sentence)
-[{'intent': 'age', 'probability': '0.674383'},
- {'intent': 'greetings', 'probability': '0.32546297'}]
- '''
