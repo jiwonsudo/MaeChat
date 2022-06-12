@@ -1,8 +1,8 @@
 from gtts import gTTS
-from IPython.display import Audio, display
+import playsound
 
-text = '안녕하세요안녕하세요'
+text = 'ㅋㅋ루삥뽕'
 
-tts = gTTS(text = text, lang='ko') #lang='ko' -> 한국어 입력
-tts.save('output.wav') #kor_wav를 wav파일로 저장
-display(Audio('output.wav', autoplay = True))
+audioData = gTTS(text = text, lang='ko')  # 한국어 입력
+audioData.save('ttsTest.mp3')  # audioData를 output.wav로 저장
+playsound.playsound('ttsTest.mp3')

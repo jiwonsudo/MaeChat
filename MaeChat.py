@@ -18,14 +18,13 @@ from util import *
 import re
 from konlpy.tag import Komoran
 komoran = Komoran()
-import playsound
 
 # import for STT (Speech-To-Text)
 import speech_recognition as sr
 
 # import for TTS (Text-To-Speech)
 from gtts import gTTS
-from IPython.display import Audio, display
+import playsound
 
 # import for APIs
 import json
@@ -193,7 +192,7 @@ while True:
         textToSpeech(outputText)
 
         with open('./log.txt', 'a') as textLog: # save log in every chat
-            textLog.write('{0} input: {1}, output: {2}\n'.format(logLineCounter, inputText, outputText))
+            textLog.write('{0} Input: {1}, Output: {2}\n'.format(logLineCounter, inputText, outputText))
         logLineCounter += 1
 
 textLog.close()
