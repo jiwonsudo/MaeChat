@@ -31,7 +31,11 @@ import json
 import requests
 import datetime
 
-
+# import for Maps
+import cv2
+import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
 
 def speechToText():
     Recognizer = sr.Recognizer()  # 인스턴스 생성
@@ -92,6 +96,140 @@ def getLunchMenu(dateToday : str):
 
     return lunchMenu
 
+def showMap(outputTag : str):
+
+    global path
+
+    # 1층
+    if outputTag == "1_Cafeteria":
+        path = '../Maps/1_Cafeteria.png'
+    if outputTag == "1_CookingClass":
+        path = '../Maps/1_CookingClass.png'
+    if outputTag == "1_AdminOffice":
+        path = '../Maps/1_AdminOffice.png'
+    if outputTag == "1_PrincipalOffice":
+        path = '../Maps/1_PrincipalOffice.png'
+    if outputTag == "1_ServiceRoom":
+        path = '../Maps/1_ServiceRoom.pn'
+    if outputTag == "1_GuardOffice":
+        path = '../Maps/1_GuardOffice.png'
+    if outputTag == "1_HealthRoom":
+        path = '../Maps/1_HealthRoom.png'
+    if outputTag == "1_SpecialClasses":
+        path = '../Maps/1_SpecialClasses.png'
+
+    # 2층
+    if outputTag == "2_ComputerClasses":
+        path = '../Maps/2_ComputerClasses.png'
+    if outputTag == "2_SWClass":
+        path = '../Maps/2_SWClass.png'
+    if outputTag == "2_EduInfoOffice":
+        path = '../Maps/2_EduInfoOffice.png'
+    if outputTag == "2_StarStarClass":
+        path = '../Maps/2_StarStarClass.png'
+    if outputTag == "2_1GradeOffice":
+        path = '../Maps/2_1GradeOffice.png'
+    if outputTag == "2_1stOffice":
+        path = '../Maps/2_1stOffice.png'
+    if outputTag == "2_ElectronicsRoom":
+        path = '../Maps/2_ElectronicsRoom.png'
+    if outputTag == "2_BroadCastRoom":
+        path = '../Maps/2_BroadCastRoom.png'
+    if outputTag == "2_ConferenceRoom":
+        path = '../Maps/2_ConferenceRoom.png'
+    if outputTag == "2_YoutubeRoom":
+        path = '../Maps/2_YoutubeRoom.png'
+    if outputTag == "2_Darak":
+        path = '../Maps/2_Darak.png'
+    if outputTag == "2_Library":
+        path = '../Maps/2_Library.png'
+    if outputTag == "2_Theater":
+        path = '../Maps/2_Theater.png'
+
+    # 3층
+    if outputTag == "3_2GradeOffice":
+        path = '../Maps/3_2GradeOffice.png'
+    if outputTag == "3_Hanmae":
+        path = '../Maps/3_Hanmae.png'
+    if outputTag == "3_DesignRoom2":
+        path = '../Maps/3_DesignRoom2.png'
+    if outputTag == "3_DreamNarae3":
+        path = '../Maps/3_DreamNarae3.png'
+    if outputTag == "3_CouncilRoom":
+        path = '../Maps/3_CouncilRoom.png'
+    if outputTag == "3_DebateRoom":
+        path = '../Maps/3_DebateRoom.png'
+    if outputTag == "3_EduFileRoom":
+        path = '../Maps/3_EduFileRoom.png'
+    if outputTag == "3_2ndOffice":
+        path = '../Maps/3_2ndOffice.png'
+    if outputTag == "3_MathStudyClass":
+        path = '../Maps/3_MathStudyClass.png'
+    if outputTag == "3_GroupStudyClass":
+        path = '../Maps/3_GroupStudyClass.png'
+    if outputTag == "3_Gym":
+        path = '../Maps/3_Gym.png'
+
+    # 4층
+    if outputTag == "4_Bizo":
+        path = '../Maps/4_Bizo.png'
+    if outputTag == "4_3GradeOffice":
+        path = '../Maps/4_3GradeOffice.png'
+    if outputTag == "4_PhysicsClass":
+        path = '../Maps/4_PhysicsClass.png'
+    if outputTag == "4_EarthScienceClass":
+        path = '../Maps/4_EarthScienceClass.png'
+    if outputTag == "4_DreamNarae4":
+        path = '../Maps/4_DreamNarae4.png'
+    if outputTag == "4_PaintingClass2":
+        path = '../Maps/4_PaintingClass2.png'
+    if outputTag == "4_RelaxRoom":
+        path = '../Maps/4_RelaxRoom.png'
+    if outputTag == "4_Storage":
+        path = '../Maps/4_Storage.png'
+    if outputTag == "4_SocietyClass":
+        path = '../Maps/4_SocietyClass.png'
+
+    # 5층
+    if outputTag == "5_MusicClass":
+        path = '../Maps/5_MusicClass.png'
+    if outputTag == "5_ArtClass":
+        path = '../Maps/5_ArtClass.png'
+    if outputTag == "5_WeClass":
+        path = '../Maps/5_WeClass.png'
+    if outputTag == "5_PaintingClass3":
+        path = '../Maps/5_PaintingClass3.png'
+    if outputTag == "5_DesignRoom3":
+        path = '../Maps/5_DesignRoom3.png'
+    if outputTag == "5_DesignRoom1":
+        path = '../Maps/5_DesignRoom1.png'
+    if outputTag == "5_ChemicsClass":
+        path = '../Maps/5_ChemicsClass.png'
+    if outputTag == "5_BiologyClass":
+        path = '../Maps/5_BiologyClass.png'
+    if outputTag == "5_DreamJiRak":
+        path = '../Maps/5_DreamJiRak.png'
+    if outputTag == "5_ArtOffice":
+        path = '../Maps/5_ArtOffice.png'
+    if outputTag == "5_SmallGroupClass":
+        path = '../Maps/5_SmallGroupClass.png'
+    if outputTag == "5_MiniGym":
+        path = '../Maps/5_MiniGym.png'
+    if outputTag == "5_EnglishClass2":
+        path = '../Maps/5_EnglishClass2.png'
+    if outputTag == "5_EnglishClass1":
+        path = '../Maps/5_EnglishClass1.png'
+    if outputTag == "5_EnglishBookCafe":
+        path = '../Maps/5_EnglishBookCafe.png'
+    if outputTag == "5_PaintingClass1":
+        path = '../Maps/5_PaintingClass1.png'
+
+    image_pil = Image.open(path)
+    image = np.array(image_pil)
+    plt.imshow(image)
+    plt.show()
+
+
 def cleanUpSentence(sentence):
     sentence = re.sub(r'[^\w\s]', '', sentence)  # 모든 구두점 제거
     morpheme = komoran.pos(sentence)  # 형태소 분석
@@ -134,7 +272,7 @@ def getResponse(predictList, intents_json):
         if item['tag'] == tag:
             result = random.choice(item['responses'])
             break
-    return result
+    return result, tag
 
 ##########################################################################
 # Main starts here...
@@ -153,7 +291,7 @@ model = load_model('chatbot_model.h5')
 
 bot_name = "MaeChat"
 listen_error_message = '죄송해요, 잘 알아듣지 못했어요.'
-textToSpeech('대화를 시작하려면, "t"키를 입력하세요.')
+# textToSpeech('대화를 시작하려면, "t"키를 입력하세요.')
 
 # start_message = '안녕하세요, 저는 매천고등학교의 AI 음성 로봇, 매챗이예요.'
 # print(start_message)
@@ -169,7 +307,11 @@ while True:
         inputText : str = speechToText()
 
         pred_list = predictClass(inputText)
-        outputText = getResponse(pred_list, intents)  # intents: json contents
+        outputList = getResponse(pred_list, intents)  # intents: json contents
+        outputText = outputList[0]
+        outputTag = outputList[1]
+
+        showMap(outputTag)
 
         if inputText == '장비를 정지합니다':
             textToSpeech('프로그램을 종료합니다.')
