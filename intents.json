@@ -225,6 +225,15 @@
       ]
     },
     {
+      "tag" : "LunchMenu",
+      "patterns": [
+        "점심", "점심메뉴", "급식"
+      ],
+      "responses": [
+        " "
+      ]
+    },
+    {
       "tag": "2_ComputerClasses",
       "patterns": [
         "컴퓨터실", "컴퓨터 1실", "컴퓨터실 1"
