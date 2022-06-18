@@ -295,7 +295,7 @@ model = load_model('chatbot_model.h5')
 
 bot_name = "MaeChat"
 listen_error_message = '죄송해요, 잘 알아듣지 못했어요.'
-# textToSpeech('대화를 시작하려면, "t"키를 입력하세요.')
+textToSpeech('대화를 시작하려면, "t"키를 입력하세요.')
 
 # start_message = '안녕하세요, 저는 매천고등학교의 AI 음성 로봇, 매챗이예요.'
 # print(start_message)
